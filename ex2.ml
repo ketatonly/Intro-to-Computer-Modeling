@@ -6,8 +6,21 @@ calculations.
  *)
 
 
+ type number =
+  | Int of int 
+  | Single of int32
+  | Double of float
 
-let solve_quadratic (a: float) (b: float) (c: float) : (float * float) option = 
+let toFloat (n : number) : float =
+  match n with
+  | Int i -> float_of_int i
+  | Double d -> d
+  | Single s -> Int32.to_float s  
+
+let solve_quadratic (a: number) (b: number) (c: number) : (float * float) option = 
+  let a = toFloat a in
+  let b = toFloat b in
+  let c = toFloat c in
   if a = 0. then
     None (* It's not a quadratic equation*)
   else
@@ -27,8 +40,10 @@ let test a b c =
   | None -> print_string "No real roots\n"
   | Some (x1, x2) -> Printf.printf "Roots: %.2f, %.2f\n" x1 x2
 
+
 let () =
-  test 0. 2. 3.;
-  test 1. 2. 5.;
-  test 1. (-4.) 4.;
-  test 1. (-5.) 6.;
+  test (Int 1) (Int (-5)) (Int 6);
+  test (Double 1.0) (Double (-4.0)) (Double 4.0);
+  test (Single (Int32.of_int 1)) 
+       (Single (Int32.of_int (-2))) 
+       (Single (Int32.of_int 0));
